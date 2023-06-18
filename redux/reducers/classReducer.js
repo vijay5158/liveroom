@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 import AxiosInstance from "../../utils/AxiosInstance";
 import { setPostSuccess } from "./postReducer";
-import { Alert } from "react-native";
+import alertFunc from "../../components/Alert";
+
+
 
 
 const initialState = {
@@ -75,7 +77,7 @@ export const getClasses = token => {
                 dispatch(getCLSListSuccess(classes));
             })
             .catch(err => {
-                Alert.alert(err);
+                alertFunc(err?.message);
             });
     };
 };
@@ -93,7 +95,7 @@ export const getAnnouncements = (token,slug) => {
                 dispatch(getAnmntListSuccess(announcements));
             })
             .catch(err => {
-                Alert.alert(err);
+                alertFunc(err?.message);
             });
     };
 };
@@ -113,11 +115,12 @@ export const createAnnouncement = (token, Anmnt) => {
                 dispatch(createAnmntSuccess(announcement));
             })
             .catch(err => {
+                alertFunc(err?.message)
             });
     };
 };
 
-export const createCLS = (token, cls,setModalVisible) => {
+export const createCLS = (token, cls,setModalVisible,setLoading) => {
     return dispatch => {
         AxiosInstance.defaults.headers = {
             "Content-Type": "application/json",
@@ -129,13 +132,17 @@ export const createCLS = (token, cls,setModalVisible) => {
                 dispatch(addCLSSuccess(res.data));
             })
             .catch(err => {
+                alertFunc(err?.message);
             })
-            .finally(()=> setModalVisible(false));
+            .finally(()=> {
+                setModalVisible(false);
+                setLoading(false);
+            });
     };
 };
 
 
-export const joinCLS = (token, data,setModalVisible) => {
+export const joinCLS = (token, data,setModalVisible,setLoading) => {
     const slug = data['slug'];
     const student = {"students" : [data['student_id']]}
     return dispatch => {
@@ -150,9 +157,12 @@ export const joinCLS = (token, data,setModalVisible) => {
                 dispatch(addCLSSuccess(res.data));
             })
             .catch(err => {
-                Alert.alert(err);
+                alertFunc(err?.message);
             })
-            .finally(()=> setModalVisible(false))
+            .finally(()=> {
+                setModalVisible(false);
+                setLoading(false);
+            })
     };
 };
 
@@ -167,11 +177,11 @@ export const deleteCLS = (token, data) => {
         AxiosInstance.delete(`classes/${slug}/`)
             .then(res => {
                 dispatch(deleteCLSSuccess(id))
-                Alert.alert("Class deleted");
+                alertFunc("Class deleted");
             })
             .catch(err => {
+                alertFunc(err?.message);
 
-                Alert.alert(err);
             });
     };
 };
@@ -194,7 +204,31 @@ export const getCurrentClassSuccess = (token, slug) => {
 // console.log(classData);
             })
             .catch(err => {
-                Alert.alert(err);
+                alertFunc(err?.message);
+            });
+
+    };
+};
+
+export const MarkAttendance = (token, formData) => {
+    return dispatch => {
+        AxiosInstance.defaults.headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const url = `mark-attendance/`
+        AxiosInstance
+            .post(url,formData)
+            .then(res => {
+                const data = res.data;
+                if(data.success){
+                    alertFunc(data.msg);
+                }
+                else{
+                    alertFunc(data.msg);
+                }
+            })
+            .catch(err => {
+                alertFunc(err?.message);
             });
 
     };

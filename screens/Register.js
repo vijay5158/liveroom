@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar, Alert } from "react-native";
+import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar } from "react-native";
 import SelectDropdown from 'react-native-select-dropdown';
 import { useDispatch } from 'react-redux';
 import { authSignup } from '../redux/reducers/authReducer';
 import { ScrollView } from 'react-native';
-
+import AvatarDropdown from '../components/AvatarDropdown';
+import alertFunc from '../components/Alert';
+import { ActivityIndicator } from "react-native-paper";
 const backImage = require("../assets/backImage.png");
 
 export default function Register({ navigation }) {
   const data = ["Teacher","Student"];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [isStudent, setIsStudent] = useState(null);
@@ -18,22 +21,33 @@ export default function Register({ navigation }) {
   const onHandleSignup = () => {
 
     if (email?.length>0 && password?.length>0 && name?.length>0 && mobile?.length===10 ) {
-      const userData = {
-        name: name,
-        email: email,
-        mobile: mobile,
-        password: password,
-        is_student: isStudent,
-        is_teacher: !isStudent,
-      }
-      dispatch(authSignup(userData));
+      // let userData = {
+      //   name: name,
+      //   email: email,
+      //   mobile: mobile,
+      //   password: password,
+      //   is_student: isStudent,
+      //   is_teacher: !isStudent,
+      // };
+      setLoading(true);
+      const formData = new FormData();
+      formData.append('name',name)
+      formData.append('email',email)
+      formData.append('mobile',mobile)
+      formData.append('password',password)
+      formData.append('is_student',String(isStudent))
+      formData.append('is_teacher',String(!isStudent))
+      // if(avatar){
+      //   formData.append('avatar',avatar);
+      // }
+      dispatch(authSignup(formData,setLoading));
     }
     else{
-      Alert.alert('Please fill all data or data is incorrect!')
+     alertFunc('Please fill all data or data is incorrect!')
     }
   };
   const handleRole = (selectedItem, index) => {
-    console.log(selectedItem, index)
+    // console.log(selectedItem, index)
     if(index === 0){
       setIsStudent(false);
     }
@@ -43,10 +57,11 @@ export default function Register({ navigation }) {
   }
   return (
     <ScrollView>
-    <View className="flex-1 bg-[#fff]" >
+    <View className="flex-1 bg-[#fff] min-h-[100vh]" >
       <Image source={backImage} className="absolute top-0 h-[340px] w-[100%] object-cover" />
       <View className="w-[100%] h-[75%] sm:h-[85%] absolute bottom-0 rounded-tl-[60px] bg-[#fff] " />
       <SafeAreaView className="flex-1 justify-end mx-[30px] pb-[2rem] sm:mx-auto max-w-[600px] sm:w-full">
+
         <Text className="font-bold text-[36px] text-[#01858a] pb-[24px] self-center " >Sign up</Text>
         <TextInput
         placeholder="Name"
@@ -75,7 +90,7 @@ export default function Register({ navigation }) {
       placeholder="Number"
       autoCapitalize="none"
       keyboardType="numeric"
-      textContentType="number"
+      textContentType="telephoneNumber"
       className="h-[58px] bg-[#F6F7FB] sm:w-[50%] focus:border-2 border-[#01858a] outline-none transition-all text-[16px] rounded-[10px] p-[12px] "
       value={mobile}
       onChangeText={(text) => setMobile(text)}
@@ -95,12 +110,12 @@ export default function Register({ navigation }) {
         data={data}
         defaultButtonText="I am ?"
         onSelect={handleRole}
-        buttonStyle={{height:'58px',width:'100%',backgroundColor:'#F6F7FB',fontSize:'16px',borderRadius:'10px',padding:'12px',marginBottom:'20px'}}
+        buttonStyle={{height:58,width:'100%',backgroundColor:'#F6F7FB',fontSize:16, borderRadius:10 ,padding:12 ,marginBottom:20}}
         buttonTextStyle={{textAlign:'start'}}
         // className="h-[58px] bg-[#F6F7FB] focus:border-2 border-[#01858a] outline-none transition-all mb-[20px] text-[16px] rounded-[10px] p-[12px]"
         dropdownStyle={{borderRadius:'1rem'}}
-        rowStyle={{padding:'10px'}}
-        rowTextStyle={{textAlign:'start',}}
+        rowStyle={{padding:10}}
+        rowTextStyle={{textAlign:'left',}}
         selectedRowStyle={{backgroundColor:'#01858a'}}
         selectedRowTextStyle={{color:'white'}}
         buttonTextAfterSelection={(selectedItem, index) => {
@@ -114,13 +129,17 @@ export default function Register({ navigation }) {
           return item
         }}
       />
-      <TouchableOpacity className="bg-[#01858a] h-[58px] rounded-[10px] justify-center items-center mt-[40px] " onPress={onHandleSignup}>
+      <TouchableOpacity disabled={loading} className="bg-[#01858a] h-[58px] rounded-[10px] justify-center items-center mt-[40px] " onPress={onHandleSignup}>
+      {loading ? (
+    <ActivityIndicator color="white" />
+  ) : (
         <Text className="font-bold text-[#fff] text-[18px] "> Take off !</Text>
-      </TouchableOpacity>
+  )}
+        </TouchableOpacity>
       <View className="mt-[20px] flex-row items-center self-center">
         <Text className="text-[gray] font-semibold text-[14px] " >Already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text className="text-[#01858a] font-semibold text-[14px] "> Sign Up</Text>
+          <Text className="text-[#01858a] font-semibold text-[14px] "> Login</Text>
         </TouchableOpacity>
       </View>
       </SafeAreaView>

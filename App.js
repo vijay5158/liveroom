@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import './global.css';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Dashboard from './screens/Dashboard';
@@ -26,6 +25,7 @@ import Settings from './screens/Settings';
 import Animated from 'react-native-reanimated';
 import { getClasses } from './redux/reducers/classReducer';
 import { getUserData } from './redux/reducers/userReducer';
+import ProfilePage from './screens/Profile';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -34,9 +34,9 @@ const AuthStack = ({isAuthenticated})=>{
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" options={{
-                                    title: 'Login',
-                                    animationTypeForReplace: isAuthenticated ? 'push' : 'pop',
-                                  }}
+        title: 'Login',
+        animationTypeForReplace: isAuthenticated ? 'push' : 'pop',
+      }}
                                 component={Login} />
       <Stack.Screen name="Register" component={Register} />
     </Stack.Navigator>
@@ -45,7 +45,7 @@ const AuthStack = ({isAuthenticated})=>{
 
 const ClassStack = ()=>{
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName='AllClasses' screenOptions={{ headerShown: false }}>
       <Stack.Screen name="AllClasses" options={{
                                     title: 'Classes',
                                     animationTypeForReplace: 'push',
@@ -106,7 +106,7 @@ const DashboardDrawer = ()=>{
       // overlayColor: 'transparent',
     }}
 >
-<Drawer.Screen
+{/* <Drawer.Screen
            key="Dashboard"
            name="Dashboard"
            options={{
@@ -120,7 +120,7 @@ const DashboardDrawer = ()=>{
                }
            }}
            component={Dashboard}
-         />
+         /> */}
          <Drawer.Screen
            key="Classes"
            name="Classes"
@@ -136,6 +136,23 @@ const DashboardDrawer = ()=>{
            }}
            component={ClassStack}
          />
+          <Drawer.Screen
+           key="Profile"
+           name="Profile"
+           options={{
+              drawerIcon:({focused})=> <FontAwesome name="user-circle-o" size={18} color={focused ? "#01858a" : "#f57c00"}/>,
+              headerShown:true,
+              header: ({ route }) => {
+                const title = route?.name;
+                 return (
+                <Header screen={title}/>
+                 );
+               }
+           }}
+           component={ProfilePage}
+         />
+
+
           <Drawer.Screen
            key="Settings"
            name="Settings"
@@ -193,8 +210,8 @@ const RootNavigator = ()=>{
   if(loading){
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Getting token...</Text>
-        <ActivityIndicator size="large" />
+        <Text className="text-[#01858a] mb-4 font-semibold text-xl">Getting Ready...</Text>
+        <ActivityIndicator size="large" color="#f57c00" />
       </View>
     )
   }

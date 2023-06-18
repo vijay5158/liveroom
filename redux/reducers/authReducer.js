@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import { setUserInfo, unSetUserInfo } from "./userReducer";
 import AxiosInstance from "../../utils/AxiosInstance";
 import { removeTokens, storeTokens } from "../services/Storage";
-import { Alert } from "react-native";
+import alertFunc from "../../components/Alert";
+
 
 
 const initialState = {
@@ -87,68 +88,83 @@ export const useAccessToken = () => {
 //   };
 // };
 
-export const authLogin = (email, password) => {
+export const authLogin = (email, password,setLoading) => {
   return async dispatch => {
    
+try {
+  await AxiosInstance.post('login/', {
+    email: email,
+    password: password,
+  }).then((res) => {
+    if(res.data.success){
+    const data = res.data?.user;
+    const tokens = res.data?.tokens;
+    const user = {
+      // profile_img: data?.profile_img,
+      name: data?.name,
+      mobile: data?.mobile,
+      email: data?.email,
+      expirationDate: new Date().getTime() + 36000 * 1000,
+      // is_student: data?.is_student,
+      // is_teacher: data?.is_teacher,
+      userId: data?.id
+    };
+    dispatch(login(tokens))
+    dispatch(setUserInfo(user));
+    // dispatch(checkAuthTimeout(36000));
+        storeTokens(tokens?.access,tokens?.refresh);
 
-    await AxiosInstance.post('login/', {
-        email: email,
-        password: password,
-      }).then((res) => {
-        if(res.data.success){
-        const data = res.data?.user;
-        const tokens = res.data?.tokens;
-        const user = {
-          // profile_img: data?.profile_img,
-          name: data?.name,
-          mobile: data?.mobile,
-          email: data?.email,
-          expirationDate: new Date().getTime() + 36000 * 1000,
-          // is_student: data?.is_student,
-          // is_teacher: data?.is_teacher,
-          userId: data?.id
-        };
-        dispatch(login(tokens))
-        dispatch(setUserInfo(user));
-        // dispatch(checkAuthTimeout(36000));
-            storeTokens(tokens?.access,tokens?.refresh);
-    
-      }
-      else{
-        Alert.alert(res.data?.message);
-      }})
-      .catch(err => {
-        dispatch(authError(err));
-      });
+  }
+  else{
+    alertFunc(res.data?.message);
+    dispatch(authError({login:res.data?.message}));
+  }})
+  .catch(err => {
+    alertFunc(err.message)
+    dispatch(authError(err.message));
+  })
+  .finally(()=> setLoading(false))
+
+} catch (error) {
+  setLoading(false);
+alertFunc('Error, Try again!');
+}
   };
 };
 
 
-export const authSignup = (userData) => {
+export const authSignup = (userData,setLoading) => {
   return async dispatch => {
-  
-   await AxiosInstance.post('register/', userData).then((res) => {
-        const data = res.data?.user;
-        const tokens = res.data?.tokens;
-        const user = {
-          profile_img: data?.profile_img,
-          name: data?.name,
-          mobile: data?.mobile,
-          email: data?.email,
-          expirationDate: new Date().getTime() + 36000 * 1000,
-          is_student: data?.is_student,
-          is_teacher: data?.is_teacher,
-          userId: data?.id
-        };
-        dispatch(login(tokens))
-        dispatch(setUserInfo(user));
-        // dispatch(checkAuthTimeout(36000));
-            storeTokens(tokens?.access,tokens?.refresh);
+  try {
+    await AxiosInstance.post('register/', userData).then((res) => {
+      const data = res.data?.user;
+      const tokens = res.data?.tokens;
+      const user = {
+        profile_img: data?.profile_img,
+        name: data?.name,
+        mobile: data?.mobile,
+        email: data?.email,
+        expirationDate: new Date().getTime() + 36000 * 1000,
+        is_student: data?.is_student,
+        is_teacher: data?.is_teacher,
+        userId: data?.id
+      };
+      dispatch(login(tokens))
+      dispatch(setUserInfo(user));
+      // dispatch(checkAuthTimeout(36000));
+          storeTokens(tokens?.access,tokens?.refresh);
 
-      })
-      .catch(err => {
-        dispatch(authError(err));
-      });
+    })
+    .catch(err => {
+      alertFunc(err?.message)
+      dispatch(authError(err?.message));
+    })
+    .finally(()=> setLoading(false))
+  
+  } catch (error) {
+    setLoading(false);
+    alertFunc('Some Error occured!')
+  }
   };
 };
 

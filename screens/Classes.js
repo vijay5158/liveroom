@@ -17,12 +17,11 @@ import { StatusBar } from 'react-native';
 
 const Classes = ({ navigation }) => {
   const userData = useUser();
-  console.log(userData)
   const [modalVisible, setModalVisible] = useState(false);
   const classes = getAllClasses();
   return (
     <ScrollView>
-    <View style={styles.container}>
+    <View style={styles.container} className='min-h-[100vh]'>
 
        <Modal
         animationType="fade"
@@ -47,7 +46,8 @@ const Classes = ({ navigation }) => {
         </View>
       </Modal>
       <View className="px-2 sm:px-5 md:px-10 flex gap-4 my-4 flex-col py-4">
-<View className="flex gap-3 flex-row">
+<View className="flex gap-3 flex-row justify-between items-center sticky top-0 bg-[rgba(255,255,255,0.7)] backdrop-blur z-10 py-4">
+<View className="flex gap-3 flex-row items-center">
 <TouchableOpacity
         // onPress={() => navigation.navigate("Chat")}
        className="py-2 px-4 flex flex-row items-center justify-center gap-2 rounded text-semibold text-sm hover:bg-[rgb(1,133,138,0.1)] delay-100 hover:text-[#035c60] text-[#01858a] bg-[transparent]"
@@ -63,18 +63,19 @@ const Classes = ({ navigation }) => {
       <Text>Calendar</Text>
     </TouchableOpacity>
 </View>
+<TouchableOpacity
+        // onPress={() => navigation.navigate("Chat")}
+        onPress={() => setModalVisible(!modalVisible)}
+        style={styles.chatButton}
+    >
+       <Entypo name="plus" size={20} color={colors.lightGray} />
+    </TouchableOpacity>
+</View>
 <SafeAreaView className="grid grid-cols-1 py-4 gap-y-8 gap-x-8  
      sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
      {classes.map((classData,index)=> <ClassCard classData={classData} navigation={navigation} key={index} />)}
 </SafeAreaView >
 </View>
-    <TouchableOpacity
-        // onPress={() => navigation.navigate("Chat")}
-        onPress={() => setModalVisible(!modalVisible)}
-        style={styles.chatButton}
-    >
-       <Entypo name="plus" size={24} color={colors.lightGray} />
-    </TouchableOpacity>
 </View>
 </ScrollView>
   )
@@ -85,17 +86,17 @@ const styles = StyleSheet.create({
       // justifyContent: 'flex-end',
       // alignItems: 'flex-end',
       // position:'relative',
-      // marginTop:70,
+      paddingBottom:50,
       // minHeight:'100vh',
       backgroundColor: "#fff",
   },
   chatButton: {
-    position:'sticky',
-    bottom:'1rem',
-    left:'1rem',
+    // position:'sticky',
+    // bottom:'1rem',
+    // left:'1rem',
       backgroundColor: colors.primary,
-      height: 50,
-      width: 50,
+      height: 40,
+      width: 40,
       borderRadius: 25,
       alignItems: 'center',
       justifyContent: 'center',

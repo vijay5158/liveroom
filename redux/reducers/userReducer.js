@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 import { logout } from "./authReducer";
 import AxiosInstance from "../../utils/AxiosInstance";
-import { Alert } from "react-native";
+import alertFunc from "../../components/Alert";
+
+
 
 
 const initialState = {
@@ -19,6 +21,11 @@ export const userSlice = createSlice({
       state.user = action.payload;
       state.errors = null;
     },
+    updateUserInfo: (state, action) => {
+      // console.log({...action.payload,...state.user},action.payload);
+      Object.assign(state.user, action.payload)
+      state.errors = null;
+    }, 
     userError: (state, action) => {
       state.errors = action.payload;
     },
@@ -28,14 +35,12 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setUserInfo,unSetUserInfo,userError } = userSlice.actions;
+export const { setUserInfo,updateUserInfo,unSetUserInfo,userError } = userSlice.actions;
 
 
 export const useUser = () => {
     return useSelector((root) => root.userReducer.user);
   };
-
-
 
   export const getUserData = (token) => {
     return dispatch => {
@@ -53,7 +58,7 @@ export const useUser = () => {
             name: data?.name,
             mobile: data?.mobile,
             email: data?.email,
-            expirationDate: new Date(new Date().getTime() + 36000 * 1000),
+            expirationDate: new Date().getTime() + 36000 * 1000,
             is_student: data?.is_student,
             is_teacher: data?.is_teacher,
             userId: data?.id,
@@ -67,7 +72,7 @@ export const useUser = () => {
   
         })
         .catch((error) => {
-          Alert.alert(error);
+          alertFunc(error);
           dispatch(logout());
         })
     }
@@ -77,8 +82,8 @@ export const useUser = () => {
   export const updateUserData = (userData, userId, token) => {
     return dispatch => {
       AxiosInstance.defaults.headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
+        // "Accept": "application/json",
+        // "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       };
   
@@ -93,13 +98,13 @@ export const useUser = () => {
             email: res.data.email,
           };
          
-          dispatch(setUserInfo(userData));
+          dispatch(updateUserInfo(userData));
   
   
   
         })
         .catch((error) => {
-          Alert.alert(error);
+          alertFunc(error);
         })
     }
   }

@@ -6,21 +6,24 @@ import { View } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { useAccessToken } from '../../redux/reducers/authReducer'
 import { useUser } from '../../redux/reducers/userReducer'
+import { ActivityIndicator } from "react-native-paper";
 import { joinCLS } from '../../redux/reducers/classReducer'
 
 const JoinClass = ({setModalVisible}) => {
   const [code,setCode] = useState("");
   const userData = useUser();
   const accessToken = useAccessToken();
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const onSubmit = ()=>{
 if(code!==""){
+  setLoading(true);
   const data = {
     slug:code,
     student_id:userData?.userId
   }
-  dispatch(joinCLS(accessToken,data));
+  dispatch(joinCLS(accessToken,data,setLoading));
   setModalVisible(false);
 }
   }
@@ -44,9 +47,14 @@ if(code!==""){
     </Pressable>
     <Pressable
      className="bg-[#f57c00] py-2 px-3 rounded-[10px] justify-center items-center"
-     onPress={onSubmit}>
+    disabled={loading}
+    onPress={onSubmit}>
+        {loading ? (
+    <ActivityIndicator color="white" />
+  ) : (
      <Text className="font-bold text-[#fff] text-sm">Join</Text>
-   </Pressable>
+  )}
+     </Pressable>
     </View>
   </View>
   )

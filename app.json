@@ -16,7 +16,6 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "supportsWebSockets": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app needs access to the camera to take photos.",
         "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select photos."
@@ -27,22 +26,22 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "supportsWebSockets": true,
       "permissions": [
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
         "CAMERA"
-      ]
+      ],
+      "package": "com.vijay5158.liveroom"
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "supportsWebSockets": true
     },
+    "owner": "vijay5158",
     "extra": {
       "eas": {
         "projectId": "573c25f9-353a-4196-ad2d-3c3191d1ee4a"
       }
-    },
-    "owner": "vijay5158"
+    }
   }
 }

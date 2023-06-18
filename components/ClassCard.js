@@ -36,6 +36,7 @@ navigation.navigate("Classroom");
       className='p-4 rounded-t-lg h-[8rem]'
       resizeMode="cover"
     >
+      <View style={styles.overlay} />
         <View className="flex flex-col gap-2 justify-start items-center">
             <View className="flex flex-row gap-2 items-start justify-between w-full">
 <View className="flex flex-col">
@@ -83,6 +84,10 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
+      },
+      overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.4)', // Adjust the opacity as desired
       },
 })
 

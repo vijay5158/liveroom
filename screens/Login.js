@@ -4,23 +4,25 @@ import { authLogin, useAccessToken, useAuthentication } from "../redux/reducers/
 import { useDispatch } from "react-redux";
 import { useUser } from "../redux/reducers/userReducer";
 import { ScrollView } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 
 const backImage = require("../assets/backImage.png");
 
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const isAuthenticated = useAuthentication();    
   const onHandleLogin = () => {
     if (email !== "" && password !== "") {
-     console.log(email,password);
-     dispatch(authLogin(email,password));
+      setLoading(true);
+      dispatch(authLogin(email,password,setLoading));
     }
   };
   return (
     <ScrollView>
-    <View className="flex-1 bg-[#fff]" >
+    <View className="flex-1 bg-[#fff] min-h-[100vh]" >
       <Image source={backImage} className="absolute top-0 h-[340px] w-[100%] object-cover" />
       <View className="w-[100%] h-[75%] sm:h-[80%] absolute bottom-0 rounded-tl-[60px] bg-[#fff] " />
       <SafeAreaView className="flex-1 justify-center mx-[30px] sm:mx-auto max-w-[600px] sm:w-full ">
@@ -45,9 +47,13 @@ export default function Login({ navigation }) {
         value={password}
         onChangeText={(text) => setPassword(text)}
       />
-      <TouchableOpacity className="bg-[#f57c00] h-[58px] rounded-[10px] justify-center items-center mt-[40px] " onPress={onHandleLogin}>
+      <TouchableOpacity disabled={loading} className="bg-[#f57c00] h-[58px] rounded-[10px] justify-center items-center mt-[40px] " onPress={onHandleLogin}>
+      {loading ? (
+    <ActivityIndicator color="white" />
+  ) : (
         <Text className="font-bold text-[#fff] text-[18px] ">Enter the room !</Text>
-      </TouchableOpacity>
+  )}
+        </TouchableOpacity>
       <View className="mt-[20px] flex-row items-center self-center">
         <Text className="text-[gray] font-semibold text-[14px] " >Don't have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>

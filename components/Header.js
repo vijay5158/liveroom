@@ -21,9 +21,9 @@ export default function Header({screen}){
 </View>
 
 <View className="flex flex-row justify-between gap-4 items-center">
-<TouchableOpacity>
-<FontAwesome name="user-circle-o" size={24} color="#fff" />
-</TouchableOpacity>
+{/* <TouchableOpacity> */}
+{/* <FontAwesome name="user-circle-o" size={24} color="#fff" /> */}
+{/* </TouchableOpacity> */}
 <TouchableOpacity>
 <MaterialIcons name="more-vert" size={24} color="#fff" />
 </TouchableOpacity>

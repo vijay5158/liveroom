@@ -8,10 +8,12 @@ import { createCLS } from '../../redux/reducers/classReducer'
 import { useAccessToken } from '../../redux/reducers/authReducer'
 import { useUser } from '../../redux/reducers/userReducer'
 import { useDispatch } from 'react-redux'
+import { ActivityIndicator } from "react-native-paper";
 
 const CreateClass = ({setModalVisible}) => {
-    const userData = useUser();
-    const accessToken = useAccessToken();
+  const userData = useUser();
+  const [loading, setLoading] = useState(false);
+  const accessToken = useAccessToken();
     const dispatch = useDispatch();
     const initialFormData = Object.freeze({
         classname: '',
@@ -29,14 +31,14 @@ const CreateClass = ({setModalVisible}) => {
     // };
     const createClass = ()=>{
         if(FormData.classname!=='' && FormData.standard!=='' && FormData.subject!==''){
-        const cls = {
+          setLoading(true);
+          const cls = {
             class_name : FormData.classname,
             standard : FormData.standard,
             subject : FormData.subject,
             teacher : userData?.email
         }
-        console.log(cls)
-        dispatch(createCLS(accessToken,cls,setModalVisible));
+        dispatch(createCLS(accessToken,cls,setModalVisible,setLoading));
         
     }
     }
@@ -90,9 +92,14 @@ const CreateClass = ({setModalVisible}) => {
     </Pressable>
     <Pressable
      className="bg-[#f57c00] py-2 px-3 rounded-[10px] justify-center items-center"
-     onPress={createClass}>
+    disabled={loading}
+    onPress={createClass}>
+       {loading ? (
+    <ActivityIndicator color="white" />
+  ) : (
      <Text className="font-bold text-[#fff] text-sm">Create class</Text>
-   </Pressable>
+  )}
+     </Pressable>
     </View>
   </View>
   )

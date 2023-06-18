@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { useAccessToken } from '../../redux/reducers/authReducer';
 
 const Post = ({postData, slug}) => {
-    console.log(postData);
+    // console.log(postData);
     const userData = useUser();
     const [newComment, setNewComment] = useState("");
     const [showComment, setShowComment] = useState(false);
@@ -111,7 +111,7 @@ className="p-2"
                 size={30}
                 source={{
                     uri: 
-`https://media.geeksforgeeks.org/wp-content/uploads/20220305133853/gfglogo-300x300.png`,
+                    userData.profileImg
                 }}
             />
             :

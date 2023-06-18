@@ -3,7 +3,14 @@ import rootReducer from './reducers/rootReducer';
 import { persistStore } from 'redux-persist';
 
 export const store = configureStore({
-  reducer: rootReducer
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+  getDefaultMiddleware({
+    serializableCheck: {
+      // Ignore these action types
+      ignoredActions: ['persist/PERSIST'],
+     },
+  }),
 });
 
 
